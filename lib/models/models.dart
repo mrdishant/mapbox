@@ -5,6 +5,6 @@ export 'routeEvent.dart';
 export 'routeLeg.dart';
 export 'routeProgressEvent.dart';
 export 'routeStep.dart';
-export 'wayPoint.dart';
+export 'waypoint.dart';
 // export 'navmode.dart';
 // export 'voiceUnits.dart';
