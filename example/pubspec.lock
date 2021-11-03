@@ -84,9 +84,11 @@ packages:
   mapbox:
     dependency: "direct main"
     description:
-      path: ".."
-      relative: true
-    source: path
+      path: "."
+      ref: HEAD
+      resolved-ref: eaec91382c4132ba2db80eefb279383e33c7ca6e
+      url: "https://github.com/mrdishant/mapbox"
+    source: git
     version: "0.0.1"
   matcher:
     dependency: transitive
