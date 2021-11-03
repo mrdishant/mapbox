@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 
+export 'controller.dart';
+export 'models/models.dart';
 export 'navigation_view.dart';
 
 class Mapbox {
