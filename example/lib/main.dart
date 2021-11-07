@@ -58,22 +58,21 @@ class _MyAppState extends State<MyApp> {
         // appBar: AppBar(
         //   title: const Text('Plugin example app'),
         // ),
-        body: Column(
+        body: Stack(
           children: [
-            SizedBox(
-              height: 500,
-              child: MapBoxNavigationView(
-                destinationPoint: WayPoint(
-                    latitude: 30.899609,
-                    longitude: 75.864070,
-                    name: "Destination"),
-                onRouteEvent: _onEmbeddedRouteEvent,
-                onCreated: (MapBoxNavigationViewController controller) async {
-                  _controller = controller;
-                  controller.initialize();
-                },
-                simulateRoute: true,
-              ),
+            MapBoxNavigationView(
+              destinationPoint: WayPoint(
+                  latitude: 30.899609,
+                  longitude: 75.864070,
+                  name: "Destination"),
+              originPoint: WayPoint(
+                  latitude: 30.903921, longitude: 75.873315, name: "Origin"),
+              onRouteEvent: _onEmbeddedRouteEvent,
+              onCreated: (MapBoxNavigationViewController controller) async {
+                _controller = controller;
+                controller.initialize();
+              },
+              simulateRoute: false,
             ),
             Text("Hello")
           ],
