@@ -20,7 +20,7 @@ class FLNativeViewFactory: NSObject, FlutterPlatformViewFactory {
     private var messenger: FlutterBinaryMessenger
     
     public func createArgsCodec() -> FlutterMessageCodec & NSObjectProtocol {
-          return FlutterStandardMessageCodec.sharedInstance()
+        return FlutterStandardMessageCodec.sharedInstance()
     }
     
     init(messenger: FlutterBinaryMessenger) {
@@ -49,6 +49,8 @@ class FLNativeView: NSObject, FlutterPlatformView , NavigationMapViewDelegate, N
     var routeResponse: RouteResponse?
     var params: NSDictionary?
     var simulate=false
+    var navigationViewController: NavigationViewController?
+    
     private var _view: UIView
     
     init(
@@ -68,10 +70,9 @@ class FLNativeView: NSObject, FlutterPlatformView , NavigationMapViewDelegate, N
         self.eventChannel.setStreamHandler(self)
         
         self.channel.setMethodCallHandler { [weak self](call, result) in
-//
-//            guard self != nil != nil else { return }
-//
-//            let arguments = call.arguments as? NSDictionary
+            //
+            //
+            let arguments = call.arguments as? NSDictionary
             
             //            if(call.method == "getPlatformVersion")
             //            {
@@ -93,10 +94,11 @@ class FLNativeView: NSObject, FlutterPlatformView , NavigationMapViewDelegate, N
             //            {
             //                result(strongSelf._durationRemaining)
             //            }
-            //            else if(call.method == "finishNavigation")
-            //            {
-            //                strongSelf.endNavigation(result: result)
-            //            }
+            //            else
+            if(call.method == "finishNavigation")
+            {
+                self?.endNavigation(result: result)
+            }
             //            else if(call.method == "startNavigation")
             //            {
             //                strongSelf.startEmbeddedNavigation(arguments: arguments, result: result)
@@ -112,6 +114,12 @@ class FLNativeView: NSObject, FlutterPlatformView , NavigationMapViewDelegate, N
         
         // iOS views can be created here
         createNativeView(view: _view)
+    }
+    
+    func endNavigation(result:FlutterResult){
+        self.navigationViewController!.navigationService.stop();
+        self.navigationViewController!.dismiss(animated: true, completion:nil);
+        result(true)
     }
     
     lazy var routeOptions: NavigationRouteOptions = {
@@ -148,34 +156,40 @@ class FLNativeView: NSObject, FlutterPlatformView , NavigationMapViewDelegate, N
         
         let navigationService = MapboxNavigationService(routeResponse: routeResponse, routeIndex: 0, routeOptions: routeOptions, simulating: simulate ? .always : .never)
         let navigationOptions = NavigationOptions(navigationService: navigationService,bottomBanner:bottomBanner)
-        let navigationViewController = NavigationViewController(for: routeResponse, routeIndex: 0, routeOptions: routeOptions, navigationOptions: navigationOptions)
+        self.navigationViewController = NavigationViewController(for: routeResponse, routeIndex: 0, routeOptions: routeOptions, navigationOptions: navigationOptions)
         
-        navigationViewController.delegate = self
+        navigationViewController?.delegate = self
         
         let flutterViewController = UIApplication.shared.delegate?.window?!.rootViewController as! FlutterViewController
-        flutterViewController.addChild(navigationViewController)
+        flutterViewController.addChild(navigationViewController!)
         let container = self.view()
-        container.addSubview(navigationViewController.view)
-        navigationViewController.view.translatesAutoresizingMaskIntoConstraints = false
+        container.addSubview(navigationViewController!.view)
+        navigationViewController!.view.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            navigationViewController.view.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 0),
-            navigationViewController.view.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: 0),
-            navigationViewController.view.topAnchor.constraint(equalTo: container.topAnchor, constant: 0),
-            navigationViewController.view.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: 0)
+            navigationViewController!.view.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 0),
+            navigationViewController!.view.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: 0),
+            navigationViewController!.view.topAnchor.constraint(equalTo: container.topAnchor, constant: 0),
+            navigationViewController!.view.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: 0)
         ])
-        let parentSafeArea = navigationViewController.view.safeAreaLayoutGuide
+        let parentSafeArea = navigationViewController!.view.safeAreaLayoutGuide
+        let bottomOffset = self.params!["bottomOffset"] as! Double
         let bannerHeight: CGFloat = 0.0
-        let verticalOffset: CGFloat = 40.0
-//        let horizontalOffset: CGFloat = 10.0
-
+        let verticalOffset: CGFloat = bottomOffset
+        //        let horizontalOffset: CGFloat = 10.0
+        
         //
         bottomBanner.view.heightAnchor.constraint(equalToConstant: bannerHeight).isActive = true
         bottomBanner.view.bottomAnchor.constraint(equalTo: parentSafeArea.bottomAnchor, constant: -verticalOffset).isActive = true
         
-        navigationViewController.modalPresentationStyle = .fullScreen
+        navigationViewController!.modalPresentationStyle = .fullScreen
         flutterViewController.didMove(toParent: flutterViewController)
+//        flutterViewController.present(navigationViewController!, animated: true,completion: nil)
+        
+        
     }
+    
+    
     
     
     func view() -> UIView {
@@ -213,7 +227,7 @@ class FLNativeView: NSObject, FlutterPlatformView , NavigationMapViewDelegate, N
         //            _lastKnownLocation = location
         //            _distanceRemaining = progress.distanceRemaining
         //            _durationRemaining = progress.durationRemaining
-        //            sendEvent(eventType: MapBoxEventType.navigation_running)
+                    sendEvent(eventType: MapBoxEventType.navigation_running)
         //_currentLegDescription =  progress.currentLeg.description
         if(sink != nil)
         {
@@ -223,8 +237,10 @@ class FLNativeView: NSObject, FlutterPlatformView , NavigationMapViewDelegate, N
             let progressEventJsonData = try! jsonEncoder.encode(progressEvent)
             guard let progressEventJson = String(data: progressEventJsonData, encoding: String.Encoding.ascii) else { return }
             
-            sendEvent(eventType: MapBoxEventType.progress_change,data: progressEventJson)
-            
+//            sendEvent(eventType: MapBoxEventType.progress_change,data: progressEventJson)
+            sink!(progressEventJson)
+
+
             if(progress.isFinalLeg && progress.currentLegProgress.userHasArrivedAtWaypoint)
             {
                 sink = nil

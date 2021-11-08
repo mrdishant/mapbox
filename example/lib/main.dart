@@ -72,9 +72,20 @@ class _MyAppState extends State<MyApp> {
                 _controller = controller;
                 controller.initialize();
               },
-              simulateRoute: false,
+              bottomOffset: 100,
+              simulateRoute: true,
             ),
-            Text("Hello")
+            Positioned(
+              top: 50,
+              left: 50,
+              child: IconButton(
+                  onPressed: () async {
+                    var r = await _controller.finishNavigation();
+                    print(r);
+                    Navigator.of(context).pop();
+                  },
+                  icon: Icon(Icons.clear)),
+            )
           ],
         ),
       ),
@@ -82,7 +93,8 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> _onEmbeddedRouteEvent(e) async {
-    print(e);
+    // print(e);
+    // print(e.eventType);
     // _distanceRemaining = await _directions.distanceRemaining;
     // _durationRemaining = await _directions.durationRemaining;
     // // print(e.eventType);

@@ -16,12 +16,14 @@ class MapBoxNavigationView extends StatelessWidget {
   var simulateRoute;
   final OnNavigationViewCreatedCallBack? onCreated;
   final ValueSetter<RouteEvent>? onRouteEvent;
+  double? bottomOffset;
   static const StandardMessageCodec _decoder = StandardMessageCodec();
 
   MapBoxNavigationView(
       {required this.destinationPoint,
       required this.originPoint,
       this.simulateRoute,
+      this.bottomOffset,
       required this.onCreated,
       required this.onRouteEvent});
 
@@ -49,6 +51,7 @@ class MapBoxNavigationView extends StatelessWidget {
     creationParams['origin'] = originPointMap;
     creationParams['destination'] = destinationPointMap;
     creationParams['simulateRoute'] = simulateRoute ?? false;
+    creationParams['bottomOffset'] = bottomOffset ?? 0;
 
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
