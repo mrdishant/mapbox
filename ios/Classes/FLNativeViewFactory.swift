@@ -166,7 +166,7 @@ class FLNativeView: NSObject, FlutterPlatformView , NavigationMapViewDelegate, N
         ])
         let parentSafeArea = navigationViewController.view.safeAreaLayoutGuide
         let bannerHeight: CGFloat = 0.0
-        let verticalOffset: CGFloat = 0.0
+        let verticalOffset: CGFloat = 40.0
 //        let horizontalOffset: CGFloat = 10.0
 
         //
