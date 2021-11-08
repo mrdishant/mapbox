@@ -223,7 +223,7 @@ class FLNativeView: NSObject, FlutterPlatformView , NavigationMapViewDelegate, N
             let progressEventJsonData = try! jsonEncoder.encode(progressEvent)
             guard let progressEventJson = String(data: progressEventJsonData, encoding: String.Encoding.ascii) else { return }
             
-            sendEvent(eventType: MapBoxEventType.navigation_running,data: progressEventJson)
+            sendEvent(eventType: MapBoxEventType.progress_change,data: progressEventJson)
             
             if(progress.isFinalLeg && progress.currentLegProgress.userHasArrivedAtWaypoint)
             {
