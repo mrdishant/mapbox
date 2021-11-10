@@ -118,6 +118,7 @@ class FLNativeView: NSObject, FlutterPlatformView , NavigationMapViewDelegate, N
     
     func endNavigation(result:FlutterResult){
         self.navigationViewController!.navigationService.stop();
+        self.navigationViewController!.voiceController=nil;
         self.navigationViewController!.navigationService.endNavigation(feedback:nil)
         self.navigationViewController!.dismiss(animated: true, completion:nil);
         result(true)
@@ -264,6 +265,7 @@ class FLNativeView: NSObject, FlutterPlatformView , NavigationMapViewDelegate, N
     
     func navigationViewControllerDidDismiss(_ navigationViewController: NavigationViewController, byCanceling canceled: Bool) {
         self.navigationViewController!.navigationService.stop();
+        self.navigationViewController!.voiceController=nil;
         self.navigationViewController!.navigationService.endNavigation(feedback: nil)
         self.navigationViewController!.dismiss(animated: true, completion:nil);
         print("On Dismiss Called")
