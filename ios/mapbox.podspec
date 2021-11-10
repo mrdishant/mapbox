@@ -15,7 +15,7 @@ A new Flutter project.
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'
-  s.dependency 'MapboxNavigation', '~> 2.0'
+  s.dependency 'MapboxNavigation', '~> 2.1.0-beta.1'
 
   s.platform = :ios, '8.0'
 
