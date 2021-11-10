@@ -117,8 +117,8 @@ class FLNativeView: NSObject, FlutterPlatformView , NavigationMapViewDelegate, N
     }
     
     func endNavigation(result:FlutterResult){
-        self.navigationViewController?.voiceController.rerouteSoundPlayer.stop()
         self.navigationViewController!.navigationService.stop();
+        self.navigationViewController!.navigationService.endNavigation(feedback:nil)
         self.navigationViewController!.dismiss(animated: true, completion:nil);
         result(true)
     }
@@ -186,7 +186,6 @@ class FLNativeView: NSObject, FlutterPlatformView , NavigationMapViewDelegate, N
         navigationViewController!.modalPresentationStyle = .fullScreen
         flutterViewController.didMove(toParent: flutterViewController)
 //        flutterViewController.present(navigationViewController!, animated: true,completion: nil)
-        
         
     }
     
@@ -264,10 +263,9 @@ class FLNativeView: NSObject, FlutterPlatformView , NavigationMapViewDelegate, N
     
     
     func navigationViewControllerDidDismiss(_ navigationViewController: NavigationViewController, byCanceling canceled: Bool) {
-        self.navigationViewController?.voiceController.rerouteSoundPlayer.stop()
         self.navigationViewController!.navigationService.stop();
+        self.navigationViewController!.navigationService.endNavigation(feedback: nil)
         self.navigationViewController!.dismiss(animated: true, completion:nil);
-    
         print("On Dismiss Called")
     }
     
